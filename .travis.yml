@@ -1,0 +1,22 @@
+sudo: required
+services:
+  - docker
+
+before_install:
+  - docker build -t grantwilliams/react-test -f ./client/Dockerfile.dev ./client
+
+scripts:
+  - docker run -e CI=true grantwilliams/react-test npm run test
+
+after_success:
+  - docker build -t grantwilliams/multi-client ./client
+  - docker build -t grantwilliams/multi-nginx ./nginx
+  - docker build -t grantwilliams/multi-server ./server
+  - docker build -t grantwilliams/multi-worker ./worker
+  # Log into docker hub
+  - echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_ID" --password-stdin
+  # Push images to docker hub
+  - docker push grantwilliams/multi-client
+  - docker push grantwilliams/multi-nginx
+  - docker push grantwilliams/multi-server
+  - docker push grantwilliams/multi-worker
