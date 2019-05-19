@@ -1,3 +1,4 @@
+language: generic
 sudo: required
 services:
   - docker
@@ -5,7 +6,7 @@ services:
 before_install:
   - docker build -t grantwilliams/react-test -f ./client/Dockerfile.dev ./client
 
-scripts:
+script:
   - docker run -e CI=true grantwilliams/react-test npm run test
 
 after_success:
